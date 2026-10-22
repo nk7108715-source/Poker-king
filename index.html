@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#071b16">
+<title>Pokar King — Texas Hold'em</title>
+<style>
+:root{--bg:#07120f;--felt:#0b6547;--felt2:#084c37;--gold:#e8bd62;--gold2:#ffdf91;--ink:#f8f5eb;--muted:#b8c8bf;--panel:#0c211b;--line:#28483b;--red:#ef5b63}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#163c2d 0,#07120f 55%,#030807 100%);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;min-height:100vh}
+button{font:inherit;cursor:pointer;border:0}button:disabled{opacity:.4;cursor:not-allowed}
+.app{max-width:850px;margin:0 auto;padding:14px 12px 24px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px}.crown{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(145deg,#ffe5a0,#b77a25);color:#14261b;font-size:23px;box-shadow:0 5px 20px #d9a84730}
+.brand h1{margin:0;font-size:20px;letter-spacing:1.8px}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:2px;margin-top:1px}
+.wallet{border:1px solid #6c5730;background:#171e16;padding:9px 12px;border-radius:12px;color:var(--gold2);font-weight:800;font-size:13px;white-space:nowrap}
+.status{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:12px;margin:8px 2px 10px}.pill{border:1px solid #3a6b51;border-radius:99px;padding:5px 9px;color:#baf2c9;background:#103325}
+.table{position:relative;min-height:420px;border:8px solid #55391c;border-radius:46% / 28%;background:radial-gradient(ellipse at center,var(--felt) 0,var(--felt2) 72%,#063323 100%);box-shadow:inset 0 0 0 3px #b88745,inset 0 0 30px #001d12,0 14px 35px #0008;overflow:hidden;padding:16px 10px 18px}
+.table:before{content:"POKAR KING";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:clamp(19px,5vw,32px);letter-spacing:5px;font-weight:900;color:#d7b96a12;white-space:nowrap;pointer-events:none}
+.seats{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto 1fr auto;gap:12px 5px;min-height:385px;z-index:1}
+.seat{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;text-align:center}.seat.top-left{grid-column:1;grid-row:1}.seat.top-mid{grid-column:2;grid-row:1}.seat.top-right{grid-column:3;grid-row:1}.center{grid-column:1/4;grid-row:2;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px;padding:8px 0}.seat.bottom-left{grid-column:1;grid-row:3}.seat.bottom-right{grid-column:3;grid-row:3}.seat.bottom-mid{grid-column:2;grid-row:3}
+.avatar{width:37px;height:37px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:linear-gradient(145deg,#274b3c,#10251c);border:2px solid #c49a50;box-shadow:0 3px 8px #00170e}
+.name{font-size:11px;font-weight:750;margin-top:4px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.stack{font-size:10px;color:#ffdf91;margin-top:1px}.seat.active .avatar{box-shadow:0 0 0 3px #ffe09a70,0 0 18px #ffe09a60;border-color:#fff0b8}.seat.folded{opacity:.42}.cards{display:flex;justify-content:center;gap:4px;margin-top:5px;min-height:48px}
+.card{width:31px;height:45px;border-radius:5px;background:#fffdf7;color:#171a18;box-shadow:0 2px 5px #00150d70;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;font-size:15px;line-height:1;flex-shrink:0;border:1px solid #ddd}.card .suit{font-size:13px;margin-top:3px}.card.red{color:#d52f3a}.card.back{background:repeating-linear-gradient(45deg,#173a2c,#173a2c 4px,#d5ad58 4px,#d5ad58 6px);border:2px solid #f0d28a;color:transparent}
+.community{display:flex;gap:5px;justify-content:center;min-height:67px;align-items:center}.community .card{width:42px;height:61px;font-size:19px;border-radius:6px}.community .card .suit{font-size:16px}.pot{font-size:13px;font-weight:800;color:#ffe3a0;background:#092b20a8;border:1px solid #b88b43;border-radius:99px;padding:6px 14px}.round{font-size:10px;color:#d6e5da;letter-spacing:2px;text-transform:uppercase}
+.controls{margin-top:14px;background:linear-gradient(180deg,#10271e,#091812);border:1px solid var(--line);border-radius:18px;padding:14px}
+.info-row{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;color:var(--muted);margin-bottom:12px}.message{min-height:20px;color:#ffe4a1;font-weight:650;font-size:13px;text-align:center;margin:5px 0 12px}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.action{padding:12px 4px;border-radius:11px;font-size:12px;font-weight:850;color:#f9f7ef;background:#263c32;border:1px solid #496456}.action.primary{background:linear-gradient(145deg,#f3d27f,#c68b2c);color:#192319;border:0}.action.danger{background:#4a2025;border-color:#874047}
+.raise-row{display:flex;align-items:center;gap:10px;margin:12px 0 2px;font-size:12px;color:var(--muted)}input[type=range]{width:100%;accent-color:var(--gold)}.raise-value{color:var(--gold2);font-weight:800;min-width:52px;text-align:right}
+.bottom-row{display:flex;gap:8px;margin-top:12px}.secondary{flex:1;padding:10px;border:1px solid #456052;border-radius:10px;background:#12271e;color:#dce9df;font-size:12px;font-weight:750}
+.notice{font-size:10px;line-height:1.5;color:#8fa79a;text-align:center;margin:12px 8px 0}
+@media(min-width:600px){.app{padding:20px}.table{min-height:475px}.seats{min-height:438px}.card{width:36px;height:51px}.community .card{width:50px;height:70px}.avatar{width:43px;height:43px}.name{font-size:12px}.stack{font-size:11px}}
+@media(max-width:380px){.table{border-width:6px;padding:12px 5px}.seats{min-height:365px;gap:8px 2px}.card{width:27px;height:40px}.community .card{width:37px;height:55px}.actions{gap:5px}.action{font-size:11px;padding:11px 2px}.brand h1{font-size:18px}.wallet{font-size:11px;padding:8px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="crown">♛</div><div><h1>POKAR KING</h1><small>TEXAS HOLD'EM</small></div></div>
+    <div class="wallet">🪙 <span id="wallet">1,000</span></div>
+  </header>
+  <div class="status"><span>TABLE • PRACTICE ROOM</span><span class="pill">● LOCAL DEMO</span></div>
+  <main class="table">
+    <div class="seats" id="seats">
+      <div class="seat top-left" id="seat-1"></div>
+      <div class="seat top-mid" id="seat-2"></div>
+      <div class="seat top-right" id="seat-3"></div>
+      <div class="center">
+        <div class="round" id="round">Ready to play</div>
+        <div class="community" id="community"></div>
+        <div class="pot">POT 🪙 <span id="pot">0</span></div>
+      </div>
+      <div class="seat bottom-left" id="seat-4"></div>
+      <div class="seat bottom-mid" id="seat-0"></div>
+      <div class="seat bottom-right" id="seat-5"></div>
+    </div>
+  </main>
+  <section class="controls">
+    <div class="info-row"><span id="handInfo">Tap “Deal hand” to start</span><span id="yourStack">Your chips: 1,000</span></div>
+    <div class="message" id="message">Welcome to Pokar King. Ready?</div>
+    <div class="actions">
+      <button class="action danger" id="foldBtn" onclick="playerAction('fold')" disabled>Fold</button>
+      <button class="action" id="checkBtn" onclick="playerAction('check')" disabled>Check</button>
+      <button class="action" id="callBtn" onclick="playerAction('call')" disabled>Call</button>
+      <button class="action primary" id="raiseBtn" onclick="playerAction('raise')" disabled>Raise</button>
+    </div>
+    <div class="raise-row"><label for="raiseRange">Raise amount</label><input id="raiseRange" type="range" min="20" max="200" step="20" value="60" oninput="document.getElementById('raiseValue').textContent=this.value"><span class="raise-value" id="raiseValue">60</span></div>
+    <div class="bottom-row"><button class="secondary" id="dealBtn" onclick="startHand()">♠ Deal hand</button><button class="secondary" onclick="resetGame()">↻ Reset chips</button></div>
+    <div class="notice">Demo only: computer opponents, local practice chips, no cash deposits or withdrawals. Online multiplayer is not connected yet.</div>
+  </section>
+</div>
+<script>
+const suits=['♠','♥','♦','♣'], ranks=['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+const suitOrder={'♣':0,'♦':1,'♥':2,'♠':3};
+let players=[], deck=[], community=[], pot=0, round='ready', currentBet=0, handNo=0, userFolded=false, handLive=false, userActed=false;
+const $=id=>document.getElementById(id);
+function freshPlayers(){return [
+ {name:'YOU',emoji:'👑',chips:1000,hole:[],folded:false,bet:0,human:true},
+ {name:'AceFox',emoji:'🦊',chips:1000,hole:[],folded:false,bet:0},
+ {name:'LadyLuck',emoji:'🦋',chips:1000,hole:[],folded:false,bet:0},
+ {name:'RiverRat',emoji:'🐺',chips:1000,hole:[],folded:false,bet:0},
+ {name:'ChipBoss',emoji:'🦁',chips:1000,hole:[],folded:false,bet:0},
+ {name:'Lucky7',emoji:'🐼',chips:1000,hole:[],folded:false,bet:0}
+]}
+function makeDeck(){let d=[];for(let s of suits)for(let r of ranks)d.push({r,s,v:ranks.indexOf(r)+2});for(let i=d.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]]}return d}
+function draw(){return deck.pop()}
+function cardHTML(c,back=false,large=false){if(back)return '<div class="card back">◆</div>';let red=c.s==='♥'||c.s==='♦';return `<div class="card ${red?'red':''}"><span>${c.r}</span><span class="suit">${c.s}</span></div>`}
+function render(){
+ $('wallet').textContent=players[0].chips.toLocaleString();$('yourStack').textContent='Your chips: '+players[0].chips.toLocaleString();$('pot').textContent=pot.toLocaleString();$('round').textContent=({ready:'Ready to play',preflop:'Pre-flop',flop:'Flop',turn:'Turn',river:'River',showdown:'Showdown'})[round]||round;
+ $('community').innerHTML=community.map(c=>cardHTML(c)).join('');
+ players.forEach((p,i)=>{let el=$('seat-'+i);if(!el)return;el.className='seat '+(['bottom-mid','top-left','top-mid','top-right','bottom-left','bottom-right'][i]);if(p.folded)el.classList.add('folded');if(round!=='ready'&&round!=='showdown'&&handLive&&!p.folded)el.classList.add('active');
+ let cards='';if(p.hole.length){cards=p.hole.map(c=>p.human||round==='showdown'?cardHTML(c):cardHTML(null,true)).join('')}el.innerHTML=`<div class="avatar">${p.emoji}</div><div class="name">${p.name}${p.human?' (You)':''}</div><div class="stack">🪙 ${p.chips.toLocaleString()}${p.bet?' · bet '+p.bet:''}</div><div class="cards">${cards}</div>`});
+ $('foldBtn').disabled=!handLive||userActed;$('checkBtn').disabled=!handLive||userActed||callAmount()>0;$('callBtn').disabled=!handLive||userActed||callAmount()===0;$('raiseBtn').disabled=!handLive||userActed||players[0].chips===0;
+ $('dealBtn').textContent=handLive?'Hand in progress':'♠ Deal hand';$('dealBtn').disabled=handLive;
+ $('handInfo').textContent=handLive?('Hand #'+handNo+' • '+round.toUpperCase()):'Tap “Deal hand” to start';
+}
+function callAmount(){return Math.max(0,currentBet-players[0].bet)}
+function startHand(){
+ if(handLive)return;if(players[0].chips<20){$('message').textContent='Not enough chips. Reset chips to play again.';return}
+ deck=makeDeck();community=[];pot=0;currentBet=0;round='preflop';handNo++;userFolded=false;userActed=false;handLive=true;
+ players.forEach(p=>{p.hole=[draw(),draw()];p.folded=p.chips<=0;p.bet=0});
+ // Small blind and big blind paid by computer seats, simplified
+ [1,2].forEach((i,k)=>{let amount=k===0?10:20;let pay=Math.min(amount,players[i].chips);players[i].chips-=pay;players[i].bet=pay;pot+=pay;currentBet=Math.max(currentBet,pay)});
+ $('message').textContent='Cards dealt. Choose your action.';render();
+}
+function playerAction(action){
+ if(!handLive||userActed)return;let p=players[0],toCall=callAmount();
+ if(action==='fold'){p.folded=true;userFolded=true;$('message').textContent='You folded this hand.';userActed=true;finishIfOnlyOne();if(handLive)advanceStreet(true);render();return}
+ if(action==='check'&&toCall>0){$('message').textContent='There is a bet to call. Choose Call or Fold.';return}
+ if(action==='call'){let pay=Math.min(toCall,p.chips);p.chips-=pay;p.bet+=pay;pot+=pay;$('message').textContent=pay?'You called '+pay+' chips.':'No bet to call.'}
+ if(action==='raise'){let wanted=Number($('raiseRange').value),pay=Math.min(p.chips,toCall+wanted);if(pay<=0)return;p.chips-=pay;p.bet+=pay;pot+=pay;currentBet=p.bet;$('message').textContent='You raised. The table responds…';}
+ if(action==='check')$('message').textContent='Check. Waiting for opponents…';
+ userActed=true;render();setTimeout(()=>{if(!handLive)return;botResponses();if(!handLive)return;advanceStreet(false);},550);
+}
+function botResponses(){
+ if(!handLive)return;
+ players.forEach((p,i)=>{if(i===0||p.folded)return;let due=Math.max(0,currentBet-p.bet);let strength=quickStrength(p.hole,community);
+ if(due>p.chips){due=p.chips}
+ if(due>0&&strength<0.38&&Math.random()<0.52){p.folded=true;return}
+ let pay=due;
+ if(strength>0.72&&p.chips>due&&Math.random()<0.25){let raise=Math.min(40,p.chips-due);pay+=raise;currentBet=Math.max(currentBet,p.bet+pay)}
+ p.chips-=pay;p.bet+=pay;pot+=pay;
+ });
+ finishIfOnlyOne();render();
+}
+function quickStrength(hole,board){let all=[...hole,...board];let vals=all.map(c=>c.v);let pairs=vals.length-new Set(vals).size;let high=Math.max(...vals);return Math.min(.95,.18+high/20+pairs*.18+Math.random()*.18)}
+function finishIfOnlyOne(){let alive=players.filter(p=>!p.folded);if(alive.length===1){alive[0].chips+=pot;$('message').textContent=alive[0].name+' wins the pot of '+pot+' chips!';pot=0;handLive=false;round='showdown';revealBots();render();}}
+function advanceStreet(fromFold){
+ if(!handLive)return;
+ // reset street bets between rounds
+ players.forEach(p=>p.bet=0);currentBet=0;
+ if(round==='preflop'){community=[draw(),draw(),draw()];round='flop'}
+ else if(round==='flop'){community.push(draw());round='turn'}
+ else if(round==='turn'){community.push(draw());round='river'}
+ else {showdown();return}
+ userActed=false;
+ if(!fromFold){$('message').textContent=round==='flop'?'Flop dealt. Your action.':round==='turn'?'Turn dealt. Your action.':'River dealt. Your action.'}
+ render();
+}
+function revealBots(){round='showdown';render()}
+function showdown(){
+ round='showdown';handLive=false;
+ let alive=players.filter(p=>!p.folded);
+ // Demo winner logic: evaluate rank classes + high card. Full 7-card evaluator added in this starter.
+ let scores=alive.map(p=>({p,score:handScore([...p.hole,...community])})).sort((a,b)=>b.score-a.score);
+ let best=scores[0].score,winners=scores.filter(x=>x.score===best).map(x=>x.p);
+ let share=Math.floor(pot/winners.length);winners.forEach(p=>p.chips+=share);pot=0;
+ $('message').textContent=winners.map(p=>p.name).join(' & ')+' win the hand!';render();
+}
+function handScore(cards){
+ // Starter evaluator: counts pairs/trips/quads and high cards; flush/straight support included.
+ let counts={},suitsCount={},vals=cards.map(c=>c.v);cards.forEach(c=>{counts[c.v]=(counts[c.v]||0)+1;suitsCount[c.s]=(suitsCount[c.s]||0)+1});
+ let groups=Object.values(counts).sort((a,b)=>b-a),flush=Object.values(suitsCount).some(n=>n>=5);
+ let unique=[...new Set(vals)].sort((a,b)=>b-a);if(unique.includes(14))unique.push(1);let straight=false;for(let i=0;i<=unique.length-5;i++){if(unique[i]-unique[i+4]===4){straight=true;break}}
+ let cat=0;if(straight&&flush)cat=8;else if(groups[0]===4)cat=7;else if(groups[0]===3&&groups[1]===2)cat=6;else if(flush)cat=5;else if(straight)cat=4;else if(groups[0]===3)cat=3;else if(groups[0]===2&&groups[1]===2)cat=2;else if(groups[0]===2)cat=1;
+ return cat*1e8+Math.max(...vals)*1e5+vals.reduce((a,v)=>a+v,0);
+}
+function resetGame(){players=freshPlayers();community=[];pot=0;round='ready';handLive=false;currentBet=0;userActed=false;$('message').textContent='Chips reset. Ready for a new hand?';render()}
+players=freshPlayers();render();
+</script>
+</body>
+</html>
